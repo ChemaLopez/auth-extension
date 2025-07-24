@@ -1,6 +1,6 @@
 import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/ussers/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashingService } from '../hashing/hashing.service';
 import { SignUpDto } from './dto/sign-up.dto';
@@ -64,7 +64,7 @@ export class AuthenticationService {
           this.signToken<Partial<ActiveUserData>>(
             user.id,
             this.jwtConfiguration.accesTokenTTL,
-            { email: user.email },
+            { email: user.email , role: user.role },
           ),
           this.signToken(user.id, this.jwtConfiguration.refreshTokenTTL, {refreshTokenId} ),
         ]);
@@ -91,7 +91,9 @@ export class AuthenticationService {
           if (!isValid) {
             throw new UnauthorizedException();
           }
+          this.refreshTokenIdsStorage.invalidate(user.id);
           return this.generateTokens(user);
+          
         } catch (err) {
             if( err instanceof InvalidateRefreshTokenError) {
                 throw new UnauthorizedException('Access denied');
