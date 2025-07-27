@@ -14,7 +14,8 @@ import { AccessTokenGuard } from './authentication/guards/access-token/access-to
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage/refresh-token-ids.storage';
 import { RedisModule } from './redis/redis.module';
 import { Role } from 'src/users/enums/role.enums';
-import { RolesGuard } from './authorization/guards/roles/roles.guard';
+import { RolesGuard } from './authorization/guards/roles.guard';
+import { PermissionsGuard } from './authorization/guards/permissions.guard';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { RolesGuard } from './authorization/guards/roles/roles.guard';
     },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard
+      useClass: PermissionsGuard  //RolesGuard
     },
     AccessTokenGuard,
     RefreshTokenIdsStorage,
