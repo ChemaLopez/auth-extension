@@ -8,13 +8,19 @@ import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
 import { Role } from 'src/users/enums/role.enums';
 import { Permissions } from 'src/iam/authorization/decorators/permissions.decorator';
 import { Permission } from 'src/iam/authorization/permission.types';
+import { Policies } from 'src/iam/authorization/decorators/policies.decorator';
+import { FrameworkContributorPolicy } from 'src/iam/authorization/policies/framework-contributor.policy';
+import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
+import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
+@Auth(AuthType.Bearer, AuthType.ApiKey)
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
   @Post()
   //@Roles(Role.Admin)
-  @Permissions(Permission.CREATE_COFFEE)
+  //@Permissions(Permission.CREATE_COFFEE)
+  @Policies( new FrameworkContributorPolicy() )
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);
   }

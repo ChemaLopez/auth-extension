@@ -16,10 +16,13 @@ import { RedisModule } from './redis/redis.module';
 import { Role } from 'src/users/enums/role.enums';
 import { RolesGuard } from './authorization/guards/roles.guard';
 import { PermissionsGuard } from './authorization/guards/permissions.guard';
+import { ApiKey } from 'src/users/api-keys/entities/api-key.entity/api-key.entity';
+import { ApiKeyGuard } from './authentication/guards/api-key/api-key.guard';
+import { ApiKeyService } from './authentication/api-key.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]), 
+    TypeOrmModule.forFeature([User,ApiKey]), 
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RedisModule
@@ -37,9 +40,15 @@ import { PermissionsGuard } from './authorization/guards/permissions.guard';
       provide: APP_GUARD,
       useClass: PermissionsGuard  //RolesGuard
     },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
+    },
     AccessTokenGuard,
+    ApiKeyGuard,
     RefreshTokenIdsStorage,
-    AuthenticationService
+    AuthenticationService,
+    ApiKeyService
   ],
   controllers: [AuthenticationController]
 })
